@@ -89,3 +89,132 @@ Files inside:
 * `.github/workflows/` → Robots that automatically build your Lego models when code changes.
 
 ---
+
+
+Git commands used :
+
+Absolutely! Here’s a **quick reference for Git commands** to check user info and essential commands you should know **before and during commits**. I’ll also explain why they’re important.
+
+---
+
+## **1️⃣ Check Git user info (before commit)**
+
+Before committing, you want to make sure Git knows **who you are**:
+
+```bash
+# Check current Git user name and email
+git config user.name
+git config user.email
+
+# Check global config (applies to all repos)
+git config --global user.name
+git config --global user.email
+
+# Show all config including repo-specific overrides
+git config --list
+```
+
+> ✅ **Tip:** If your commits are going to a company repo, make sure your **user.email** matches the one allowed by the repo (e.g., your corporate email).
+
+---
+
+## **2️⃣ Common Git commands before commit**
+
+```bash
+# Check status of repo
+git status
+
+# See what changed
+git diff            # changes not staged
+git diff --staged   # changes staged for commit
+
+# Stage files for commit
+git add <file>      # stage a single file
+git add .           # stage all changes
+git add -p          # interactively stage changes (very useful)
+
+# Unstage files
+git restore --staged <file>
+git reset HEAD <file>
+
+# Discard changes
+git restore <file>        # discard changes in working directory
+git checkout -- <file>    # older syntax for same
+
+# View previous commits
+git log                  # full log
+git log --oneline --graph # simplified view
+```
+
+---
+
+## **3️⃣ Commit commands**
+
+```bash
+# Commit staged changes
+git commit -m "Your commit message"
+
+# Amend last commit (without changing commit message)
+git commit --amend --no-edit
+
+# Commit with new message
+git commit --amend -m "Updated message"
+```
+
+---
+
+## **4️⃣ Push / Pull**
+
+```bash
+# Push your commits
+git push origin <branch_name>
+
+# Pull latest changes from remote
+git pull origin <branch_name>
+
+# Fetch changes without merging
+git fetch origin
+```
+
+---
+
+## **5️⃣ Branch commands**
+
+```bash
+# Show branches
+git branch             # local branches
+git branch -a          # local + remote
+
+# Create branch
+git checkout -b <branch_name>
+
+# Switch branch
+git checkout <branch_name>
+```
+
+---
+
+## **6️⃣ Merge / Rebase**
+
+```bash
+# Merge another branch into current branch
+git merge <branch_name>
+
+# Rebase current branch onto another branch
+git rebase <branch_name>
+```
+
+---
+
+## **7️⃣ Useful tips**
+
+* Always check `git status` before commit.
+* Use `git diff` to review changes before staging.
+* Use `git log --oneline --graph --all` to see the branch structure.
+* If working with **remote teams**, double-check `git user.email` to avoid commit rejections.
+
+---
+
+If you want, I can **make a one-page “cheat sheet”** for your daily Git workflow that includes **all these commands in order** so you never have to wonder what to do before a commit.
+
+Do you want me to make that cheat sheet?
