@@ -4,7 +4,7 @@ variable "aws_region"     {
     }
 variable "cluster_name"   { 
     type = string   
-    default = "prod-eks" 
+    default = "ksd-eks" 
     }
 variable "cluster_version"{ 
     type = string
