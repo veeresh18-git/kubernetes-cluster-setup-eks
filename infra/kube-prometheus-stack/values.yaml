@@ -4800,7 +4800,18 @@ prometheus:
   #      - nodes/proxy
   #    verbs: [ "get", "list", "watch" ]
 
-  additionalServiceMonitors: []
+  additionalServiceMonitors:
+    - name: backend-v1
+      selector:
+        matchLabels:
+          app: backend-v1         
+      namespaceSelector:
+        matchNames:
+          - default                
+      endpoints:
+        - port: http
+          path: /metrics
+          interval: 15s
   ## Name of the ServiceMonitor to create
   ##
   # - name: ""
