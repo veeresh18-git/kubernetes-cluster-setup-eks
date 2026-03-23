@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 /* ---------------- DB CONNECT ---------------- */
-mongoose.connect("mongodb://host.docker.internal:27017/interiors");
+mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/interiors");
 
 mongoose.connection.on("connected", () => {
   console.log("MongoDB connected ✅");
@@ -25,6 +25,8 @@ const Lead = mongoose.model("Lead", LeadSchema);
 /* ---------------- API ---------------- */
 app.post("/contact", async (req, res) => {
   try {
+    console.log("BODY:", req.body);  // 👈 ADD THIS
+
     const { name, email, message } = req.body;
 
     const newLead = await Lead.create({
@@ -37,6 +39,7 @@ app.post("/contact", async (req, res) => {
 
     res.json({ success: true });
   } catch (err) {
+    console.error("ERROR:", err);  // 👈 ADD THIS
     res.status(500).json({ error: "Failed to save" });
   }
 });
