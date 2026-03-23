@@ -56,6 +56,11 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.envFromConfigMap }}
+            - secretRef:
+                name: {{ .Values.envFromSecret }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

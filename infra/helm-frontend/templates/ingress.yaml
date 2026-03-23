@@ -35,9 +35,9 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "ds-app.fullname" $ }}
+                name: {{ .serviceName }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ .servicePort }}
           {{- end }}
     {{- end }}
 {{- end }}

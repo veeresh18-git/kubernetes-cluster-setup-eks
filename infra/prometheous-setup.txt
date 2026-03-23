@@ -1,0 +1,58 @@
+Perfect, Veeresh! Setting up monitoring for your EKS cluster is a great next step — it helps you see pod/node health, resource usage, and troubleshoot issues before they impact your apps. Let’s break it down step by step, with a practical approach.
+
+1️⃣ What we need to monitor
+	• Cluster resources: CPU, memory, disk, pod usage
+	• Pod health: Running, crashing, restarts
+	• Node health: Node ready/not ready, CPU/memory usage
+	• App-level metrics: Requests per second, errors
+
+2️⃣ Monitoring stack for EKS
+The standard Kubernetes monitoring stack on AWS EKS is:
+Component	Purpose
+Prometheus	Scrapes metrics from Kubernetes objects, nodes, pods
+Node Exporter	Collects node-level metrics (CPU, memory, disk)
+Kube-State-Metrics	Exposes metrics about Kubernetes objects (deployments, pods, PVCs, etc.)
+Grafana	Dashboard visualization of all metrics
+Alertmanager (optional)	Sends alerts based on Prometheus rules
+
+3️⃣ How to set it up (Helm way)
+Step 1: Add Helm repo for Prometheus & Grafana
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+Step 2: Install Prometheus
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring --create-namespace
+This will install:
+	• Prometheus server
+	• Alertmanager
+	• Node exporter
+	• Kube-state-metrics
+	• Grafana
+
+Step 3: Verify installation
+kubectl get pods -n monitoring
+kubectl get svc -n monitoring
+You should see pods like:
+	• prometheus-kube-prometheus-prometheus-*
+	• prometheus-grafana-*
+	• prometheus-node-exporter-*
+	• prometheus-kube-state-metrics-*
+
+Step 4: Access Grafana
+	1. Get Grafana password:
+kubectl get secret prometheus-grafana -n monitoring -o jsonpath="{.data.admin-password}" | base64 --decode
+	2. Forward Grafana service locally:
+kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
+	3. Open in browser: http://localhost:3000
+		○ Username: admin
+		○ Password: <from step 1>
+
+Step 5: Add dashboards
+	• Prometheus & kube-state-metrics provide metrics automatically.
+	• Grafana has pre-built Kubernetes dashboards: search “Kubernetes cluster monitoring”.
+
+4️⃣ Optional: Metrics for HPA
+	• Prometheus metrics can feed your Horizontal Pod Autoscaler for CPU, memory, or custom metrics.
+	• Example: scale frontend pods when CPU > 70%
