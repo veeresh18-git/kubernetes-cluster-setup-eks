@@ -5,6 +5,7 @@ on:
     paths:
       - 'infra/env/prod/**'
       - 'infra/modules/**'
+  workflow_dispatch:
 
 jobs:
   terraform-plan:
