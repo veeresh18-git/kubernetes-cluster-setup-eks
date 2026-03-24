@@ -1,0 +1,46 @@
+Trustpolicy:
+--------------
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::262046511657:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+        },
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:veeresh18-git/kubernetes-cluster-setup-eks:ref:refs/heads/main"
+        }
+      }
+    }
+  ]
+}
+
+Iam policy:
+-----------
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "eks:*",
+        "iam:*",
+        "ec2:*",
+        "s3:*",
+        "dynamodb:*",
+        "autoscaling:*",
+        "elasticloadbalancing:*",
+        "logs:*",
+        "sts:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
