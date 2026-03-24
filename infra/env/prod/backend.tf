@@ -5,7 +5,7 @@ terraform {
     region         = "ap-south-1"
     use_lockfile   = true
     encrypt        = true
-    profile        =  "ksd"
+#    profile        =  "ksd"
   }
 }
 #backend configs
