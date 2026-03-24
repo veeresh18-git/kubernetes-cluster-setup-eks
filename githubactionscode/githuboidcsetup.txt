@@ -15,7 +15,7 @@ Trustpolicy:
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         },
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:veeresh18-git/kubernetes-cluster-setup-eks:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub": "repo:veeresh18-git/kubernetes-cluster-setup-eks:*"
         }
       }
     }
@@ -44,3 +44,10 @@ Iam policy:
     }
   ]
 }
+
+✅ OIDC setup (GitHub → AWS)
+✅ Terraform CI/CD working
+✅ IAM roles & permissions fixed
+✅ AssumeRole working
+✅ EKS cluster access configured
+✅ aws-auth updated → permanent access
