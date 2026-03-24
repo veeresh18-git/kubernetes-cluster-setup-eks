@@ -8,4 +8,4 @@ terraform {
     profile        =  "ksd"
   }
 }
-#backend config
+#backend configs
