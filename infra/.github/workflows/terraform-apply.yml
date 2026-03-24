@@ -1,0 +1,45 @@
+name: Terraform Apply (prod)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/env/prod/**'
+      - 'infra/modules/**'
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    # Require manual approval (Environments)
+    environment:
+      name: production
+      url: https://console.aws.amazon.com/eks/home
+
+    defaults:
+      run:
+        working-directory: infra/env/prod
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::262046511657:oidc-provider/token.actions.githubusercontent.com
+        aws-region: ap-south-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      run: terraform init -upgrade
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+``
