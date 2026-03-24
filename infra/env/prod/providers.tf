@@ -1,6 +1,6 @@
 provider "aws" {
-  region  = var.aws_region
-#  profile = "ksd"
+  region = var.aws_region
+  #  profile = "ksd"
 }
 
 #EKS cluster auth (populated from EKS data source/outputs)
