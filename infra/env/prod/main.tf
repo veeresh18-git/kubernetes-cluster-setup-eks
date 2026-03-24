@@ -67,7 +67,7 @@ locals {
         "autoscaling:DescribeLaunchConfigurations", "autoscaling:DescribeTags",
         "ec2:DescribeLaunchTemplateVersions", "autoscaling:SetDesiredCapacity",
       "autoscaling:TerminateInstanceInAutoScalingGroup", "ec2:DescribeImages", "ec2:DescribeInstanceTypes"],
-      Resource = ""
+      Resource = "*"
     }]
   })
   policy_external_dns = jsonencode({
