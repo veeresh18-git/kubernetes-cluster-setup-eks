@@ -1,6 +1,6 @@
 provider "aws" {
   region = var.aws_region
-  profile = "ksd"
+#  profile = "ksd"
 }
 
 resource "aws_s3_bucket" "tf_state" {
