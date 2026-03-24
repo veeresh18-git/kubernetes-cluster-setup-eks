@@ -73,8 +73,21 @@ locals {
   policy_external_dns = jsonencode({
     Version = "2012-10-17",
     Statement = [
-      { Effect = "Allow", Action = ["route53:ListHostedZones", "route53:ListResourceRecordSets"], Resource = "" },
-      { Effect = "Allow", Action = ["route53:ChangeResourceRecordSets"], Resource = "arn:aws:route53:::hostedzone/REPLACE_WITH_ZONEID" }
+      {
+        Effect = "Allow",
+        Action = [
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "route53:ChangeResourceRecordSets"
+        ],
+        Resource = "*"
+      }
     ]
   })
   policy_alb = jsonencode({
