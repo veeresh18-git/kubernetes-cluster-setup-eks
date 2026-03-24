@@ -6,7 +6,7 @@ resource "aws_kms_key" "eks_secrets" {
   description             = "EKS secrets encryption"
   enable_key_rotation     = true
   deletion_window_in_days = 30
-  tags = var.tags
+  tags                    = var.tags
 }
 module "network" {
   source          = "../../modules/network-aws"
@@ -14,7 +14,7 @@ module "network" {
   cidr            = "10.20.0.0/16"
   azs             = local.azs
   public_subnets  = ["10.20.0.0/20", "10.20.16.0/20", "10.20.32.0/20"]
-  private_subnets = ["10.20.128.0/20","10.20.144.0/20","10.20.160.0/20"]
+  private_subnets = ["10.20.128.0/20", "10.20.144.0/20", "10.20.160.0/20"]
   tags            = var.tags
 }
 module "eks" {
@@ -60,37 +60,37 @@ module "irsa_ca" {
 # Policies from earlier locals
 locals {
   policy_cluster_autoscaler = jsonencode({
-    Version="2012-10-17",
-    Statement=[{
-      Effect="Allow",
-      Action=["autoscaling:DescribeAutoScalingGroups","autoscaling:DescribeAutoScalingInstances",
-              "autoscaling:DescribeLaunchConfigurations","autoscaling:DescribeTags",
-              "ec2:DescribeLaunchTemplateVersions","autoscaling:SetDesiredCapacity",
-              "autoscaling:TerminateInstanceInAutoScalingGroup","ec2:DescribeImages","ec2:DescribeInstanceTypes"],
-      Resource=""
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = ["autoscaling:DescribeAutoScalingGroups", "autoscaling:DescribeAutoScalingInstances",
+        "autoscaling:DescribeLaunchConfigurations", "autoscaling:DescribeTags",
+        "ec2:DescribeLaunchTemplateVersions", "autoscaling:SetDesiredCapacity",
+      "autoscaling:TerminateInstanceInAutoScalingGroup", "ec2:DescribeImages", "ec2:DescribeInstanceTypes"],
+      Resource = ""
     }]
   })
   policy_external_dns = jsonencode({
-    Version="2012-10-17",
-    Statement=[
-      {Effect="Allow", Action=["route53:ListHostedZones","route53:ListResourceRecordSets"], Resource=""},
-      {Effect="Allow", Action=["route53:ChangeResourceRecordSets"], Resource="arn:aws:route53:::hostedzone/REPLACE_WITH_ZONEID"}
+    Version = "2012-10-17",
+    Statement = [
+      { Effect = "Allow", Action = ["route53:ListHostedZones", "route53:ListResourceRecordSets"], Resource = "" },
+      { Effect = "Allow", Action = ["route53:ChangeResourceRecordSets"], Resource = "arn:aws:route53:::hostedzone/REPLACE_WITH_ZONEID" }
     ]
   })
   policy_alb = jsonencode({
-    Version="2012-10-17",
-    Statement=[{Effect="Allow", Action=["elasticloadbalancing:","ec2:Describe","iam:CreateServiceLinkedRole","cognito-idp:DescribeUserPoolClient","waf-regional:GetWebACLForResource","waf-regional:GetWebACL"], Resource="*"}]
+    Version   = "2012-10-17",
+    Statement = [{ Effect = "Allow", Action = ["elasticloadbalancing:", "ec2:Describe", "iam:CreateServiceLinkedRole", "cognito-idp:DescribeUserPoolClient", "waf-regional:GetWebACLForResource", "waf-regional:GetWebACL"], Resource = "*" }]
   })
 }
 # Helm add-ons
 module "addons" {
-  source                   = "../../modules/addons-helm"
-  cluster_name             = module.eks.cluster_name
-  aws_region               = var.aws_region
-  vpc_id                   = module.network.vpc_id
-  alb_irsa_role_arn        = module.irsa_alb.role_arn
-  externaldns_irsa_role_arn= module.irsa_external_dns.role_arn
-  ca_irsa_role_arn         = module.irsa_ca.role_arn
-  domain_filters           = ["example.com"] # change to your zone(s)
+  source                    = "../../modules/addons-helm"
+  cluster_name              = module.eks.cluster_name
+  aws_region                = var.aws_region
+  vpc_id                    = module.network.vpc_id
+  alb_irsa_role_arn         = module.irsa_alb.role_arn
+  externaldns_irsa_role_arn = module.irsa_external_dns.role_arn
+  ca_irsa_role_arn          = module.irsa_ca.role_arn
+  domain_filters            = ["example.com"] # change to your zone(s)
 }
 # Enable control plane logs to CloudWatch (auditable)
