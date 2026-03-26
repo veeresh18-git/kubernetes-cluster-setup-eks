@@ -8,6 +8,7 @@ on:
       - "infra/premium-backend/**"
       - "infra/premium-frontend/Dockerfile"
       - "infra/premium-backend/Dockerfile"
+  workflow_dispatch:
 
 jobs:
   build:
