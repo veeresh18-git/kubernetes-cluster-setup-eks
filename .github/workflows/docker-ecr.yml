@@ -4,16 +4,16 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - "app/**"
-      - "frontend/**"
-      - "backend/**"
-      - "Dockerfile*"
-  workflow_dispatch:
+      - "infra/premium-frontend/**"
+      - "infra/premium-backend/**"
+      - "infra/premium-frontend/Dockerfile"
+      - "infra/premium-backend/Dockerfile"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: production
+    environment: production   # because your secrets are stored in this environment
+
     permissions:
       id-token: write
       contents: read
@@ -32,19 +32,21 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # ================================
-      # ✅ FRONTEND IMAGE BUILD + PUSH
+      # ✅ FRONTEND IMAGE
       # ================================
       - name: Build & Push Frontend Image
         run: |
           FRONT_IMAGE="${{ secrets.FRONT_ECR_URI }}:latest"
-          docker build -t $FRONT_IMAGE ./frontend
+          echo "Building frontend image: $FRONT_IMAGE"
+          docker build -t $FRONT_IMAGE ./infra/premium-frontend
           docker push $FRONT_IMAGE
 
       # ================================
-      # ✅ BACKEND IMAGE BUILD + PUSH
+      # ✅ BACKEND IMAGE
       # ================================
       - name: Build & Push Backend Image
         run: |
-          BACK_IMAGE="${{ secrets.BACKEND_ECR_URI }}:latest"
-          docker build -t $BACK_IMAGE ./backend
+          BACK_IMAGE="${{ secrets.BACK_ECR_URI }}:latest"
+          echo "Building backend image: $BACK_IMAGE"
+          docker build -t $BACK_IMAGE ./infra/premium-backend
           docker push $BACK_IMAGE
