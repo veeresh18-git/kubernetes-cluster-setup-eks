@@ -1,0 +1,46 @@
+name: Deploy Frontend & Backend to EKS
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "infra/helm-frontend/**"
+      - "infra/helm-backend/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::262046511657:role/ksd-cicd-role
+          aws-region: ap-south-1
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ap-south-1 \
+            --name ksd-eks
+
+      - name: Deploy Backend
+        run: |
+          helm upgrade --install premium-backend ./infra/helm-backend \
+            --set image.repository=${{ secrets.BACKEND_ECR_URI }} \
+            --set image.tag=latest
+
+      - name: Deploy Frontend
+        run: |
+          helm upgrade --install premium-frontend ./infra/helm-frontend \
+            --set image.repository=${{ secrets.FRONT_ECR_URI }} \
+            --set image.tag=latest
