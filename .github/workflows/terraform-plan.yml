@@ -44,8 +44,8 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -no-color -out=tfplan
 
-    - name: Upload Plan File
-      uses: actions/upload-artifact@v4
-      with:
-        name: tfplan
-        path: infra/env/prod/tfplan
+  #  - name: Upload Plan File
+  #    uses: actions/upload-artifact@v4
+  #    with:
+  #      name: tfplan
+  #      path: infra/env/prod/tfplan
