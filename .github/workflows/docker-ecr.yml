@@ -13,11 +13,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    environment: production
     permissions:
       id-token: write
       contents: read
-      environment: production
 
     steps:
       - name: Checkout
