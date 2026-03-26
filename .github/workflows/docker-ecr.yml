@@ -46,7 +46,7 @@ jobs:
       # ================================
       - name: Build & Push Backend Image
         run: |
-          BACK_IMAGE="${{ secrets.BACK_ECR_URI }}:latest"
+          BACK_IMAGE="${{ secrets.BACKEND_ECR_URI }}:latest"
           echo "Building backend image: $BACK_IMAGE"
           docker build -t $BACK_IMAGE ./infra/premium-backend
           docker push $BACK_IMAGE
