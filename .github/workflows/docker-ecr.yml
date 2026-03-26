@@ -8,7 +8,7 @@ on:
       - "frontend/**"
       - "backend/**"
       - "Dockerfile*"
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
