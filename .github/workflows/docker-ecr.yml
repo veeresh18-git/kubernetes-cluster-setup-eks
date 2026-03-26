@@ -1,0 +1,49 @@
+name: Build and Push Docker Images to ECR
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "app/**"
+      - "frontend/**"
+      - "backend/**"
+      - "Dockerfile*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::262046511657:role/ksd-cicd-role
+          aws-region: ap-south-1
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ================================
+      # ✅ FRONTEND IMAGE BUILD + PUSH
+      # ================================
+      - name: Build & Push Frontend Image
+        run: |
+          FRONT_IMAGE="${{ secrets.FRONT_ECR_URI }}:latest"
+          docker build -t $FRONT_IMAGE ./frontend
+          docker push $FRONT_IMAGE
+
+      # ================================
+      # ✅ BACKEND IMAGE BUILD + PUSH
+      # ================================
+      - name: Build & Push Backend Image
+        run: |
+          BACK_IMAGE="${{ secrets.BACKEND_ECR_URI }}:latest"
+          docker build -t $BACK_IMAGE ./backend
+          docker push $BACK_IMAGE
