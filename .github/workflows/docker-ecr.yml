@@ -8,6 +8,7 @@ on:
       - "infra/premium-backend/**"
       - "infra/premium-frontend/Dockerfile"
       - "infra/premium-backend/Dockerfile"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -50,3 +51,4 @@ jobs:
           echo "Building backend image: $BACK_IMAGE"
           docker build -t $BACK_IMAGE ./infra/premium-backend
           docker push $BACK_IMAGE
+
