@@ -1366,7 +1366,7 @@ grafana:
     ## If true, Grafana Ingress will be created
     ##
     enabled: true
-    IngressClassName: "nginx"
+    IngressClassName: "alb"
     ## IngressClassName for Grafana Ingress.
     ## Should be provided if Ingress is enable.
     ##
@@ -1374,7 +1374,14 @@ grafana:
 
     ## Annotations for Grafana Ingress
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
+      alb.ingress.kubernetes.io/rewrite-target: /      
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+      alb.ingress.kubernetes.io/healthcheck-path: /
+
+
 
     ## Labels to be added to the Ingress
     ##
