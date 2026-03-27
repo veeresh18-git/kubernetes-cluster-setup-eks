@@ -31,7 +31,7 @@ module "eks" {
 module "irsa_alb" {
   source             = "../../modules/irsa-aws"
   role_name          = "${var.cluster_name}-alb-controller"
-  oidc_provider_arn  = module.eks.oidc_provider
+  oidc_provider_arn  = module.eks.oidc_provider_arn
   sa_namespace       = "kube-system"
   sa_name            = "aws-load-balancer-controller"
   inline_policy_json = local.policy_alb
@@ -41,7 +41,7 @@ module "irsa_alb" {
 module "irsa_external_dns" {
   source             = "../../modules/irsa-aws"
   role_name          = "${var.cluster_name}-external-dns"
-  oidc_provider_arn  = module.eks.oidc_provider
+  oidc_provider_arn  = module.eks.oidc_provider_arn
   sa_namespace       = "kube-system"
   sa_name            = "external-dns"
   inline_policy_json = local.policy_external_dns
@@ -51,7 +51,7 @@ module "irsa_external_dns" {
 module "irsa_ca" {
   source             = "../../modules/irsa-aws"
   role_name          = "${var.cluster_name}-cluster-autoscaler"
-  oidc_provider_arn  = module.eks.oidc_provider
+  oidc_provider_arn  = module.eks.oidc_provider_arn
   sa_namespace       = "kube-system"
   sa_name            = "cluster-autoscaler"
   inline_policy_json = local.policy_cluster_autoscaler
