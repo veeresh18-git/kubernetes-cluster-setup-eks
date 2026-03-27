@@ -1,7 +1,10 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
+  version = "~> 19.0"
 
+  # ----------------------------
+  # Cluster basics
+  # ----------------------------
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
@@ -9,49 +12,41 @@ module "eks" {
   subnet_ids               = var.private_subnets
   control_plane_subnet_ids = var.private_subnets
 
-  # API access
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
-  # Give creator (CI/CD role) admin automatically
-  enable_cluster_creator_admin_permissions = true
+  # ----------------------------
+  # aws-auth MANAGEMENT (v19)
+  # ----------------------------
+  manage_aws_auth_configmap = true
 
-  # Modern access control (NO aws-auth)
-  access_entries = {
-    cicd-role = {
-      principal_arn = "arn:aws:iam::262046511657:role/ksd-cicd-role"
-
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::262046511657:role/ksd-cicd-role"
+      username = "github-actions"
+      groups   = ["system:masters"]
     }
+  ]
 
-    dev-user = {
-      principal_arn = "arn:aws:iam::262046511657:user/ks-dev-user"
-
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::262046511657:user/ks-dev-user"
+      username = "ks-dev-user"
+      groups   = ["system:masters"]
     }
-  }
+  ]
 
+  # ----------------------------
   # Encryption (KMS)
+  # ----------------------------
   cluster_encryption_config = {
     resources        = ["secrets"]
     provider_key_arn = var.kms_key_arn
   }
 
-  # Core addons
+  # ----------------------------
+  # Core EKS add-ons
+  # ----------------------------
   cluster_addons = {
     coredns = {
       most_recent = true
@@ -70,7 +65,9 @@ module "eks" {
     }
   }
 
-  # Node group
+  # ----------------------------
+  # Managed node group
+  # ----------------------------
   eks_managed_node_groups = {
     ng-general = {
       name           = "general"
