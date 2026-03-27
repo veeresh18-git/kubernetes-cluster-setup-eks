@@ -2,9 +2,6 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
 
-  # ----------------------------
-  # Cluster Basics
-  # ----------------------------
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
@@ -12,38 +9,49 @@ module "eks" {
   subnet_ids               = var.private_subnets
   control_plane_subnet_ids = var.private_subnets
 
+  # API access
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
-  # Grants admin ONLY to the identity running terraform apply
+  # Give creator (CI/CD role) admin automatically
   enable_cluster_creator_admin_permissions = true
 
-  # ----------------------------
-  # ACCESS MANAGEMENT (v20+)
-  # ----------------------------
+  # Modern access control (NO aws-auth)
   access_entries = {
-    github_actions = {
-      principal_arn     = "arn:aws:iam::262046511657:role/ksd-cicd-role"
-      kubernetes_groups = ["system:masters"]
+    cicd-role = {
+      principal_arn = "arn:aws:iam::262046511657:role/ksd-cicd-role"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
     }
 
-    ks_dev_user = {
-      principal_arn     = "arn:aws:iam::262046511657:user/ks-dev-user"
-      kubernetes_groups = ["system:masters"]
+    dev-user = {
+      principal_arn = "arn:aws:iam::262046511657:user/ks-dev-user"
+
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
     }
   }
 
-  # ----------------------------
-  # Encryption (etcd secrets)
-  # ----------------------------
+  # Encryption (KMS)
   cluster_encryption_config = {
     resources        = ["secrets"]
     provider_key_arn = var.kms_key_arn
   }
 
-  # ----------------------------
-  # EKS Add-ons
-  # ----------------------------
+  # Core addons
   cluster_addons = {
     coredns = {
       most_recent = true
@@ -62,17 +70,17 @@ module "eks" {
     }
   }
 
-  # ----------------------------
-  # Managed Node Group
-  # ----------------------------
+  # Node group
   eks_managed_node_groups = {
     ng-general = {
-      ami_type       = "AL2_x86_64"
+      name           = "general"
       instance_types = ["t3.small"]
 
       min_size     = 1
       max_size     = 3
-      desired_size = 3
+      desired_size = 2
+
+      ami_type = "AL2_x86_64"
 
       labels = {
         workload = "general"
