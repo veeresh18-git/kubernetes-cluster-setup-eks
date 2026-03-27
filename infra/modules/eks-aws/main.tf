@@ -1,7 +1,10 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
+  version = "~> 19.0"
 
+  # ----------------------------
+  # Cluster basics
+  # ----------------------------
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
@@ -12,8 +15,9 @@ module "eks" {
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
-  enable_cluster_creator_admin_permissions = true
-
+  # ----------------------------
+  # aws-auth MANAGEMENT (v19)
+  # ----------------------------
   manage_aws_auth_configmap = true
 
   aws_auth_roles = [
@@ -32,26 +36,48 @@ module "eks" {
     }
   ]
 
-
+  # ----------------------------
+  # Encryption (KMS)
+  # ----------------------------
   cluster_encryption_config = {
     resources        = ["secrets"]
     provider_key_arn = var.kms_key_arn
   }
 
+  # ----------------------------
+  # Core EKS add-ons
+  # ----------------------------
   cluster_addons = {
-    coredns            = { most_recent = true }
-    kube-proxy         = { most_recent = true }
-    vpc-cni            = { most_recent = true }
-    aws-ebs-csi-driver = { most_recent = true }
+    coredns = {
+      most_recent = true
+    }
+
+    kube-proxy = {
+      most_recent = true
+    }
+
+    vpc-cni = {
+      most_recent = true
+    }
+
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
   }
 
+  # ----------------------------
+  # Managed node group
+  # ----------------------------
   eks_managed_node_groups = {
     ng-general = {
-      ami_type       = "AL2_x86_64"
+      name           = "general"
       instance_types = ["t3.small"]
-      min_size       = 1
-      max_size       = 3
-      desired_size   = 3
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
+
+      ami_type = "AL2_x86_64"
 
       labels = {
         workload = "general"
