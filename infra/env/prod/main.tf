@@ -96,14 +96,14 @@ locals {
   })
 }
 # Helm add-ons
-module "addons" {
-  source                    = "../../modules/addons-helm"
-  cluster_name              = module.eks.cluster_name
-  aws_region                = var.aws_region
-  vpc_id                    = module.network.vpc_id
-  alb_irsa_role_arn         = module.irsa_alb.role_arn
-  externaldns_irsa_role_arn = module.irsa_external_dns.role_arn
-  ca_irsa_role_arn          = module.irsa_ca.role_arn
-  domain_filters            = ["example.com"] # change to your zone(s)
-}
-# Enable control plane logs to CloudWatch (auditable)
+# module "addons" {
+#   source                    = "../../modules/addons-helm"
+#   cluster_name              = module.eks.cluster_name
+#   aws_region                = var.aws_region
+#   vpc_id                    = module.network.vpc_id
+#   alb_irsa_role_arn         = module.irsa_alb.role_arn
+#   externaldns_irsa_role_arn = module.irsa_external_dns.role_arn
+#   ca_irsa_role_arn          = module.irsa_ca.role_arn
+#   domain_filters            = ["example.com"] # change to your zone(s)
+# }
+# # Enable control plane logs to CloudWatch (auditable)
