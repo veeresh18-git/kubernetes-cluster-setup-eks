@@ -14,37 +14,44 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
+  manage_aws_auth_configmap = true
+
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::262046511657:role/ksd-cicd-role"
+      username = "github-actions"
+      groups   = ["system:masters"]
+    }
+  ]
+
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::262046511657:user/ks-dev-user"
+      username = "ks-dev-user"
+      groups   = ["system:masters"]
+    }
+  ]
+
+
   cluster_encryption_config = {
-    resources = ["secrets"]
-    provider_key_arn = var.kms_key_arn #store etcd tokens/keys in kms
+    resources        = ["secrets"]
+    provider_key_arn = var.kms_key_arn
   }
 
   cluster_addons = {
-    coredns            = { 
-        most_recent = true 
-        } #in-cluster DNS server resolving service names.
-    kube-proxy         = {
-         most_recent = true
-          } #handles Service VIP → Pod iptables/ipvs rules.
-    vpc-cni            = {
-         most_recent = true 
-         } #assign ips to pods
-    aws-ebs-csi-driver = {
-         most_recent = true 
-         } #dynamic provisioning of ebs volumes
+    coredns            = { most_recent = true }
+    kube-proxy         = { most_recent = true }
+    vpc-cni            = { most_recent = true }
+    aws-ebs-csi-driver = { most_recent = true }
   }
 
   eks_managed_node_groups = {
     ng-general = {
-
-      ami_type = "AL2_x86_64"
-
-      # cheaper instance
+      ami_type       = "AL2_x86_64"
       instance_types = ["t3.small"]
-
-      min_size     = 1
-      max_size     = 3
-      desired_size = 3
+      min_size       = 1
+      max_size       = 3
+      desired_size   = 3
 
       labels = {
         workload = "general"
@@ -56,19 +63,3 @@ module "eks" {
 
   tags = var.tags
 }
-
-output "cluster_name" { 
-    value = module.eks.cluster_name
-     }
-output "oidc_provider_arn" {
-     value = module.eks.oidc_provider_arn 
-     }
-output "cluster_security_group_id" { 
-    value = module.eks.cluster_security_group_id
-     }
-output "cluster_endpoint" { 
-    value = module.eks.cluster_endpoint 
-    }
-output "cluster_ca" { 
-    value = module.eks.cluster_certificate_authority_data 
-    }
