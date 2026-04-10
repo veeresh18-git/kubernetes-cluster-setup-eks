@@ -1,10 +1,7 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
+  version = "~> 20.0"
 
-  # ----------------------------
-  # Cluster basics
-  # ----------------------------
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
@@ -15,69 +12,39 @@ module "eks" {
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
-  # ----------------------------
-  # aws-auth MANAGEMENT (v19)
-  # ----------------------------
-  manage_aws_auth_configmap = true
+  enable_cluster_creator_admin_permissions = true
 
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::262046511657:role/ksd-cicd-role"
-      username = "github-actions"
-      groups   = ["system:masters"]
-    }
-  ]
-
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::262046511657:user/ks-dev-user"
-      username = "ks-dev-user"
-      groups   = ["system:masters"]
-    }
-  ]
-
-  # ----------------------------
-  # Encryption (KMS)
-  # ----------------------------
   cluster_encryption_config = {
-    resources        = ["secrets"]
-    provider_key_arn = var.kms_key_arn
+    resources = ["secrets"]
+    provider_key_arn = var.kms_key_arn #store etcd tokens/keys in kms
   }
 
-  # ----------------------------
-  # Core EKS add-ons
-  # ----------------------------
   cluster_addons = {
-    coredns = {
-      most_recent = true
-    }
-
-    kube-proxy = {
-      most_recent = true
-    }
-
-    vpc-cni = {
-      most_recent = true
-    }
-
+    coredns            = { 
+        most_recent = true 
+        } #in-cluster DNS server resolving service names.
+    kube-proxy         = {
+         most_recent = true
+          } #handles Service VIP → Pod iptables/ipvs rules.
+    vpc-cni            = {
+         most_recent = true 
+         } #assign ips to pods
     aws-ebs-csi-driver = {
-      most_recent = true
-    }
+         most_recent = true 
+         } #dynamic provisioning of ebs volumes
   }
 
-  # ----------------------------
-  # Managed node group
-  # ----------------------------
   eks_managed_node_groups = {
     ng-general = {
-      name           = "general"
+
+      ami_type = "AL2_x86_64"
+
+      # cheaper instance
       instance_types = ["t3.small"]
 
       min_size     = 1
       max_size     = 3
-      desired_size = 2
-
-      ami_type = "AL2_x86_64"
+      desired_size = 3
 
       labels = {
         workload = "general"
@@ -89,3 +56,19 @@ module "eks" {
 
   tags = var.tags
 }
+
+output "cluster_name" { 
+    value = module.eks.cluster_name
+     }
+output "oidc_provider_arn" {
+     value = module.eks.oidc_provider_arn 
+     }
+output "cluster_security_group_id" { 
+    value = module.eks.cluster_security_group_id
+     }
+output "cluster_endpoint" { 
+    value = module.eks.cluster_endpoint 
+    }
+output "cluster_ca" { 
+    value = module.eks.cluster_certificate_authority_data 
+    }

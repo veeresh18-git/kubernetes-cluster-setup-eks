@@ -2,7 +2,6 @@ provider "aws" {
   region = var.aws_region
   #  profile = "ksd"
 }
-
 #EKS cluster auth (populated from EKS data source/outputs)
 #data "aws_eks_cluster" "this" {
 #  name = module.eks.cluster_name
@@ -44,3 +43,4 @@ provider "helm" {
     }
   }
 }
+>>>>>>> 1575148aeb3edbdc71be667e4e3d0b8c2078ddbf
