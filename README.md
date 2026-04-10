@@ -1,8 +1,8 @@
-# kubernetes-cluster-setup-eks
+# kubernetes-cluster-setup-eks-prod
 Got it! Let’s make this **super easy to understand** by explaining the **purpose of each folder and file** in your Terraform project. Think of it as a blueprint for your infrastructure.
 
 ---
-
+PR Workflow test 1 2 
 ## **1️⃣ infra/**
 
 This is the **root folder** of your project. Everything related to your infrastructure goes here.
