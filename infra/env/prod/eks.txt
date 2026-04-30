@@ -22,7 +22,7 @@
 [0m[1mmodule.network.module.vpc.aws_subnet.private[2]: Refreshing state... [id=subnet-0ca22a9d637f48370][0m
 [0m[1mmodule.network.module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-0189492d5a6cd54c4][0m
 [0m[1mmodule.network.module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-066f49cc92e3bf4c6][0m
-
+#TEST
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   [32m+[0m create[0m
